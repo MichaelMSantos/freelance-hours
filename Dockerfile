@@ -1,5 +1,5 @@
 # Use a imagem oficial do PHP com Apache
-FROM php:8.2-apache
+FROM php:8.1-apache
 
 # Atualizar e instalar dependências necessárias
 RUN apt-get update && apt-get install -y \
@@ -36,9 +36,6 @@ RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
 
 # Instalar dependências do Composer sem rodar scripts pós-instalação
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-scripts --no-interaction --prefer-dist
-
-# Gerar o autoloader otimizado
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize --no-interaction
 
 # Expor a porta 80 para o servidor web
 EXPOSE 80
