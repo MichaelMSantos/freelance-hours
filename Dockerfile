@@ -28,17 +28,17 @@ WORKDIR /var/www/html
 # Copiar os arquivos do projeto Laravel para o container
 COPY . .
 
-# Definir permissões corretas para as pastas de cache e storage
-RUN mkdir -p /var/www/html/storage/framework/cache/data \
+# Criar diretórios de cache e ajustar permissões
+RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
+    && mkdir -p /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache
 
-# Instalar dependências do Composer sem rodar scripts
-RUN composer install --no-scripts --no-autoloader
+# Instalar dependências do Composer sem rodar scripts pós-instalação
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-scripts --no-interaction --prefer-dist
 
-# Gerar o autoloader otimizado e permitir o uso de plugins
-RUN composer dump-autoload --optimize --no-interaction \
-    && COMPOSER_ALLOW_SUPERUSER=1 composer run-script post-autoload-dump
+# Gerar o autoloader otimizado
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize --no-interaction
 
 # Expor a porta 80 para o servidor web
 EXPOSE 80
